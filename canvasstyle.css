@@ -1,0 +1,20 @@
+body{
+    background-color: black;
+    overflow: hidden;
+}
+
+.canvas{
+    border-color: brown;
+    border: 1px solid rgb(255, 255, 255);
+}
+#canvas{
+    position: absolute;
+    z-index: 1;
+
+
+}
+#canvasOnTop{
+    position: absolute;
+    z-index: 3;
+
+}

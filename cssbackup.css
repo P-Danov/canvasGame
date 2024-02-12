@@ -1,0 +1,29 @@
+body{
+    background-color: black;
+
+}
+.canvas{
+    border-color: brown;
+    border: 1px solid rgb(255, 255, 255);
+}
+#canvas{
+    position: absolute;
+    z-index: 1;
+    max-width:1224px;
+    max-height:776px;
+    width:1224px;
+    height:776px;
+    max-width: 100%;
+    max-height: 100%;
+
+}
+#canvasOnTop{
+    position: absolute;
+    z-index: 3;
+    max-width:1224px;
+    max-height:976px;
+    width:1224px;
+    height:976px;
+    max-width: 100%;
+    max-height: 100%;
+}
