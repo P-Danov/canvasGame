@@ -303,12 +303,79 @@ function drawAllSlots(){
     }
     
 }
+function hoverOnSign(event){
+    if(event.clientX<1090+120&&
+        event.clientX>950&&
+        event.clientY>670&&
+        event.clientY<695+100&&!inventoryOpen&&!settingsOpen){
+            if(event.clientX<970+90&&
+                event.clientX>980&&
+                event.clientY>695&&
+                event.clientY<695+80&&!inventoryOpen){
+                    invSignHoverVar = true
+                }
+                else{
+                    invSignHoverVar = false
+                }
+            if(event.clientX<1090+90&&
+                event.clientX>1100&&
+                event.clientY>695&&
+                event.clientY<695+80&&!inventoryOpen){
+                    statSignHoverVar = true
+                }
+                else{
+                    statSignHoverVar = false
+                }
+    }
+    if(event.clientX<1070+120&&
+        event.clientX>950&&
+        event.clientY>10&&
+        event.clientY<100+100&&inventoryOpen){
+            if(event.clientX<1070+100&&
+                event.clientX>1070&&
+                event.clientY>30&&
+                event.clientY<30+100&&inventoryOpen){
+                    xSignHoverVar = true 
+                }
+                else{
+                    xSignHoverVar = false
+            }
+
+
+    }
+
+}
+function clickOnSign(event){
+    if(event.clientX<1070+100&&
+        event.clientX>1100&&
+        event.clientY>30&&
+        event.clientY<30+100&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            inventoryOpen = false;
+            stopAll = false;
+            xSignHoverVar = false;
+        }
+    if(event.clientX<970+90&&
+        event.clientX>980&&
+        event.clientY>695&&
+        event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
+            inventoryOpen = true;
+            stopAll = true;
+            invSignHoverVar = false;
+    }
+    c.drawImage(invSignHover,970,695,90,80)
+}
 
 function openInventory(){
 resetDirectionsButtons()
 
 c.drawImage(inventory,0,0,1224,776)
 c.drawImage(inventoryTrash,1070,620,100,100)
+if(!xSignHoverVar){
+    c.drawImage(xSign,1070,30,100,100)
+}
+else{
+    c.drawImage(xSignHover,1070,30,100,100)
+}
 c.fillStyle = 'black'
 c.font = "bold 20px serif";
 c.fillText(showInventoryCarryWeight,800,600,150,100)

@@ -60,8 +60,16 @@ const quickBar = new Image
 quickBar.src = 'images/quickBar.png'
 const invSign = new Image
 invSign.src = 'images/invSign.png'
+const invSignHover = new Image
+invSignHover.src = 'images/inventoryHover.png'
 const statSign = new Image
 statSign.src = 'images/statSign.png'
+const statSignHover = new Image
+statSignHover.src = 'images/settingsHover.png'
+const xSign = new Image
+xSign.src = 'images/xSign.png'
+const xSignHover = new Image
+xSignHover.src = 'images/xSignHover.png'
 const inventory = new Image
 inventory.src = 'images/inventory3.png'
 const infoCell = new Image
@@ -133,6 +141,9 @@ let attackInProgress = false;
 let actualCarryWeight = 0 ;
 let showInventoryCarryWeight ;
 let type;
+let invSignHoverVar = false;
+let statSignHoverVar = false;
+let xSignHoverVar = false;
 let disabled = false;
 let itemFoundOnGround = false;
 let acceptButtonHover = false;
@@ -252,6 +263,7 @@ let keyE = false;
 let keyECooldown = false;
 let keySpace = false;
 let inventoryOpen = false;
+
 
 function detectCollision({object1,object2}){
   return (
@@ -762,13 +774,24 @@ function animate(){
       enemy.drawDmgText()
     })
     c.drawImage(quickBar,0,695,620,80)
-    c.drawImage(invSign,900,695,90,80)
-    c.drawImage(statSign,700,695,120,80)
+    if(!invSignHoverVar){
+      c.drawImage(invSign,970,695,90,80)
+    }
+    else{
+      c.drawImage(invSignHover,970,695,90,80)
+    }
+    if(!statSignHoverVar){
+      c.drawImage(statSign,1090,695,90,80)
+    }
+    else{
+      c.drawImage(statSignHover,1090,695,90,80)
+    }
+
     messageOnCanvas()
     if(inventoryOpen){
       openInventory()
     }
-
+    drawSettings()
     
 
     takeBagContent()
@@ -788,15 +811,19 @@ function handleKeyDown(event) {
 
     switch (event.key) {
       case 'w':
+        case 'W':
         keyW = true;
         break;
       case 'a':
+        case 'A':
         keyA = true;
         break;
       case 's':
+        case 'S':
         keyS = true;
         break;
       case 'd':
+        case 'D':
         keyD = true;
         break;
       case ' ':
@@ -806,6 +833,7 @@ function handleKeyDown(event) {
   }
     switch (event.key){
       case 'e':
+        case 'E':
         if(!keyECooldown){
           //console.log('e')
           keyE = true;
@@ -814,7 +842,28 @@ function handleKeyDown(event) {
       case 'Enter':
         keyE = true;
         break;
+      case 'Escape':
+        if(inventoryOpen&&!lockInventory&&!currentItemOn){
+          if(firstHover){
+            currentItemOnHover.hoverOn = false
+          }
+          inventoryOpen = false;
+          stopAll = false;   
+        }
+        else if(!inventoryOpen&&!settingsOpen){
+          console.log('open settings')
+          resetDirectionsButtons();
+          settingsOpen = true;
+          stopAll = true;
+        }
+        else if(!inventoryOpen&&settingsOpen){
+          console.log('close settings')
+          settingsOpen = false;
+          stopAll = false;
+        }
+        break
       case 'i':
+        case 'I':
         if(!inventoryOpen){
           inventoryOpen = true;
           stopAll = true;
@@ -827,6 +876,7 @@ function handleKeyDown(event) {
       }
         break;
     }
+    
     }
   
   
@@ -836,6 +886,7 @@ function handleKeyDown(event) {
     if(!stopAll){
     switch (event.key) {
       case 'w':
+        case 'W':
         srcX = 0
         srcY = 252
         if(!colideGrass.top){    
@@ -850,6 +901,7 @@ function handleKeyDown(event) {
         currentDirection = 'top'
         break;
       case 'a':
+        case 'A':
         srcX = 0
         srcY = 504
         if(!colideGrass.left){ 
@@ -864,6 +916,7 @@ function handleKeyDown(event) {
         currentDirection = 'left'
         break;
       case 's':
+        case 'S':
         srcX = 0
         srcY = 0
         if(!colideGrass.down){ 
@@ -878,6 +931,7 @@ function handleKeyDown(event) {
         currentDirection = 'bottom'
         break;
       case 'd':
+        case 'D':
         srcX = 0
         if(!colideGrass.right){   
           colideGrassShadow = false         
@@ -897,6 +951,7 @@ function handleKeyDown(event) {
     }
       switch (event.key){
         case 'e':
+          case 'E':
           keyECooldown=false;
           keyE = false;
           break;
@@ -950,10 +1005,12 @@ function handleKeyDown(event) {
   window.addEventListener('click', checkIfValidItem)
   window.addEventListener('click', clickAcceptOrCancel)
   window.addEventListener('click', changeEquipment)
+  window.addEventListener('click', clickOnSign)
   window.addEventListener('mousemove', moveIfValidItem)
   window.addEventListener('mousemove', detectEquipmentCollision)
   window.addEventListener('mousemove', hoverOnItem)
   window.addEventListener('mousemove', moveStackSlider)
+  window.addEventListener('mousemove', hoverOnSign)
   window.addEventListener('mousedown', mouseDown)
   window.addEventListener('mouseup', mouseUp)
   window.addEventListener('resize',resize)
