@@ -11,6 +11,8 @@ const v = secondCanvas.getContext("2d");
 secondCanvas.width = 1224;
 secondCanvas.height = 976;
 
+const fps = 120
+
 const collisionMap = []
 for(let i = 0; i < collisions.length; i += 80){
     collisionMap.push(collisions.slice(i, 80 + i))
@@ -801,8 +803,10 @@ function animate(){
       currentFrame++
       slowerFrame = 0
     }
-
-    requestAnimationFrame(animate)
+    setTimeout(() => {
+      requestAnimationFrame(animate);
+    }, 1000 / fps);
+    //requestAnimationFrame(animate)
 }
 
 function handleKeyDown(event) {
