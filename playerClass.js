@@ -27,36 +27,48 @@ class Player{
           height : this.heightRange
     
         }
-        this.attackRange = 0.4
+        this.attackRange = 0.4;
+        this.experiencePoints = 0;
+        this.skillPoints = 50;
 
-        this.strength = 10
+        this.strength = 1
 
-          this.minDamage = 0 + equipedWeaponDamage.min
-          this.maxDamage = 1 + equipedWeaponDamage.max
-          this.knockback = 10*this.strength
+        updateMinDamage = 0 + this.strength * 0.2
+        updateMaxDamage = 1 + this.strength * 0.2
+        this.minDamage = Math.round(updateMinDamage + equipedWeaponDamage.min * (this.strength * 0.1));
+        this.maxDamage = Math.round(updateMaxDamage + equipedWeaponDamage.max * (this.strength * 0.1));  
+          //this.minDamage = Math.round(0 + equipedWeaponDamage.min + (this.strength * 0.2));
+          //this.maxDamage = Math.round(1 + equipedWeaponDamage.max + (this.strength * 0.2))          
           this.damage = Math.floor(Math.random() * (this.maxDamage - this.minDamage + 1) + this.minDamage)
+          this.knockback = 10*this.strength
           
-          this.carryWeight = this.strength*20
+          this.carryWeight = 45 + this.strength*5
 
-        this.endurance = 10
-          this.maxHp = 25 + this.endurance*10
+        this.endurance = 1
+          this.maxHp = 28 + this.endurance*2
           //this.defence = this.endurance*3
-          this.physicalDefence = this.endurance*1
+          this.physicalDefence = Math.round(this.endurance*0.1)
 
-        this.intelligence = 10
-          this.maxMp = 25 + this.intelligence*10
-          this.magicalDefence = this.intelligence*1
+        this.intelligence = 1
+          this.maxMp = 8 + this.intelligence*2
+          this.magicalDefence = Math.round(this.intelligence*0.1)
           this.destructionSkill
           this.summoningSkill
           this.necromancySkill
 
-        this.agility = 10
+        this.agility = 1
           this.attackSpeed = 500
-          this.rangedDamage
-          this.evasion
+          this.rangedMinDamage = Math.round(equipedWeaponDamage.min * (this.agility * 0.1));
+          this.rangedMaxDamage = Math.round(equipedWeaponDamage.max * (this.agility * 0.1));         
+          this.rangedDamage = Math.floor(Math.random() * (this.rangedMaxDamage - this.rangedMinDamage + 1) + this.rangedMinDamage)
+          this.evasion = Math.round(this.agility*0.1)
           this.speed
 
-        this.charisma = 10
+        this.charisma = 1
+          this.buyPrice = 150.4 - (this.charisma*0.4);
+          this.sellPrice = 49.6 + (this.charisma*0.4);
+          this.followerDamageBonus;
+          this.followerHpBonus
 
     }
 

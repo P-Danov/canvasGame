@@ -526,9 +526,13 @@ function changeEquipment(event){
 }
 
 function updateArmorStats(){
-    player.physicalDefence = player.endurance*1
+    player.physicalDefence = Math.round(player.endurance*0.1)
     equipedWeaponDamage.min = 0
     equipedWeaponDamage.max = 0
+    updateMinDamage = 0 + player.strength * 0.2
+    updateMaxDamage = 1 + player.strength * 0.2
+    player.minDamage = Math.round(updateMinDamage + equipedWeaponDamage.min * (player.strength * 0.1));
+    player.maxDamage = Math.round(updateMaxDamage + equipedWeaponDamage.max * (player.strength * 0.1));
     
     equipedItems.forEach((equipedItem)=>{
         if(equipedItem.defence>0){
@@ -542,8 +546,20 @@ function updateArmorStats(){
 
 
     })
+    player.carryWeight = 45 + player.strength*5
+    showInventoryCarryWeight = "Carry Weight : "+(actualCarryWeight)+" / "+player.carryWeight
     showInventoryStat.physicalDefence=player.physicalDefence+" %"
-    player.minDamage = 0 + equipedWeaponDamage.min*(player.strength*0.2)
-    player.maxDamage = 1 + equipedWeaponDamage.max*(player.strength*0.2)
+    //showInventoryStat.physicalDefence = Math.round(player.endurance*0.1)+" %"
+    player.minDamage = Math.round(updateMinDamage + equipedWeaponDamage.min + (equipedWeaponDamage.min * (player.strength * 0.1)/2));
+    player.maxDamage = Math.round(updateMaxDamage + equipedWeaponDamage.max + (equipedWeaponDamage.max * (player.strength * 0.1)/2));
     showInventoryStat.damage=player.minDamage+" - "+player.maxDamage
+    showInventoryStat.buyPrice = 150 - (player.charisma*0.4) +"%";
+    showInventoryStat.sellPrice = 50 + (player.charisma*0.4) +"%";
+    showInventoryStat.attackSpeed = 500
+    showInventoryStat.evasion = Math.round(player.agility*0.1) +"%"
+    player.knockback = 10*player.strength
+
+    //player.minDamage = Math.round(0 + equipedWeaponDamage.min + (player.strength * 0.2));
+    //player.maxDamage = Math.round(1 + equipedWeaponDamage.max + (player.strength * 0.6))          
+    //player.damage = Math.floor(Math.random() * (player.maxDamage - player.minDamage + 1) + player.minDamage)
 }

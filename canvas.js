@@ -55,7 +55,10 @@ const offset = {
     x:0,
     y:-900
 }
-
+const startSelector = new Image
+startSelector.src = 'images/startSelector1.png'
+const introImage = new Image
+introImage.src = 'images/introImage.png'
 const textBox = new Image
 textBox.src = 'images/textbox.png'
 const quickBar = new Image
@@ -138,6 +141,11 @@ const spriteSheet02 = new SpriteSheet(12,8,"images/catSprite2.png")
 const startingAreaBackground = new Background({position:{x:0,y:-900}},"images/startingAreaZoom.png")
 const startingAreaBackgroundBehind = new Background({position:{x:0,y:-900}},"images/startingAreaZoomBehind.png")
 
+let gameStart = false;
+let alpha = 0.01
+let alphaOn = true;
+let turnOffIntro = false;
+playIntro = true
 let startedBottom = false
 let attackInProgress = false;
 let actualCarryWeight = 0 ;
@@ -310,72 +318,38 @@ function animate(){
     c.clearRect(0,0,canvas.width,canvas.height)
     v.clearRect(0,0,secondCanvas.width,secondCanvas.height)
 
-    player.attack()
+    intro();
+    
 
-    let moving = true
-    if (keyW && keyD) {
-      for (let i = 0 ; i < blocks.length; i++){
-        const block = blocks[i]
-        if(
-          detectCollision({
-            object1:player,
-            object2:{...block, position: {
-              x: block.position.x - 8 ,
-              y: block.position.y + 8 
-            }}
-          })
-        ){
-          moving = false
-          srcX = 0
-          break
-        }
+    if(!playIntro){
+      
+      if(!alphaOn&&alpha < 1){
+        alpha += 0.01
+        v.globalAlpha = alpha;
+        c.globalAlpha = alpha;
+        console.log(v.globalAlpha)
       }
-        for (let i = 0 ; i < grassArray.length; i++){
-          const grass = grassArray[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...grass, position: {
-                x: grass.position.x - 8 ,
-                y: grass.position.y + 8 
-              }}
-            })
-          ){
-            colideGrassShadow = true
-            colideGrass.right = true
-            break
-          }
-          else{
-            colideGrassShadow = false
-            colideGrass.right = false
-          }
-        }
-        if(moving){
-          movingSprite = true
-          player.x += player.speed / Math.sqrt(2); // Ruch na skos
-          player.y -= player.speed / Math.sqrt(2);
-          player.cameraToTopRight()
-          currentDirection = 'right'
-          currentFrame = currentFrame % totalFrames.down
-          srcX = currentFrame * 252
-          if(!colideGrass.right){            
-            srcY = 760
-          }
-          else if(colideGrass.right){
-            srcY = 1792
-          }
+      else if (!alphaOn&&alpha >= 1){
+        alphaOn = true
+        stopAll = false;
+        console.log("2")
+        gameStart = true;
+      }
 
-        }
 
-      } else if (keyS && keyA){
+    
+      player.attack()
+
+      let moving = true
+      if (keyW && keyD) {
         for (let i = 0 ; i < blocks.length; i++){
           const block = blocks[i]
           if(
             detectCollision({
               object1:player,
               object2:{...block, position: {
-                x: block.position.x + 8 ,
-                y: block.position.y - 8 
+                x: block.position.x - 8 ,
+                y: block.position.y + 8 
               }}
             })
           ){
@@ -384,42 +358,44 @@ function animate(){
             break
           }
         }
-        for (let i = 0 ; i < grassArray.length; i++){
-          const grass = grassArray[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...grass, position: {
-                x: grass.position.x - 8 ,
-                y: grass.position.y + 8 
-              }}
-            })
-          ){
-            colideGrassShadow = true
-            colideGrass.left = true
-            break
+          for (let i = 0 ; i < grassArray.length; i++){
+            const grass = grassArray[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...grass, position: {
+                  x: grass.position.x - 8 ,
+                  y: grass.position.y + 8 
+                }}
+              })
+            ){
+              colideGrassShadow = true
+              colideGrass.right = true
+              break
+            }
+            else{
+              colideGrassShadow = false
+              colideGrass.right = false
+            }
           }
-          else{
-            colideGrassShadow = false
-            colideGrass.left = false
+          if(moving){
+            movingSprite = true
+            player.x += player.speed / Math.sqrt(2); // Ruch na skos
+            player.y -= player.speed / Math.sqrt(2);
+            player.cameraToTopRight()
+            currentDirection = 'right'
+            currentFrame = currentFrame % totalFrames.down
+            srcX = currentFrame * 252
+            if(!colideGrass.right){            
+              srcY = 760
+            }
+            else if(colideGrass.right){
+              srcY = 1792
+            }
+  
           }
-        }
-        if(moving){
-          player.x -= player.speed / Math.sqrt(2); // Ruch na skos
-          player.y += player.speed / Math.sqrt(2);
-          player.cameraToBottomLeft()
-          currentDirection = 'left'
-          currentFrame = currentFrame % totalFrames.down
-          srcX = currentFrame * 252
-          if(!colideGrass.left){            
-            srcY = 504
-          }
-          else if(colideGrass.left){
-            srcY = 1536
-          }
-        }
-      }
-        else if (keyW && keyA){
+  
+        } else if (keyS && keyA){
           for (let i = 0 ; i < blocks.length; i++){
             const block = blocks[i]
             if(
@@ -427,7 +403,7 @@ function animate(){
                 object1:player,
                 object2:{...block, position: {
                   x: block.position.x + 8 ,
-                  y: block.position.y + 8 
+                  y: block.position.y - 8 
                 }}
               })
             ){
@@ -458,8 +434,8 @@ function animate(){
           }
           if(moving){
             player.x -= player.speed / Math.sqrt(2); // Ruch na skos
-            player.y -= player.speed / Math.sqrt(2);
-            player.cameraToTopLeft()
+            player.y += player.speed / Math.sqrt(2);
+            player.cameraToBottomLeft()
             currentDirection = 'left'
             currentFrame = currentFrame % totalFrames.down
             srcX = currentFrame * 252
@@ -471,20 +447,278 @@ function animate(){
             }
           }
         }
-        else if (keyS && keyD){
+          else if (keyW && keyA){
+            for (let i = 0 ; i < blocks.length; i++){
+              const block = blocks[i]
+              if(
+                detectCollision({
+                  object1:player,
+                  object2:{...block, position: {
+                    x: block.position.x + 8 ,
+                    y: block.position.y + 8 
+                  }}
+                })
+              ){
+                moving = false
+                srcX = 0
+                break
+              }
+            }
+            for (let i = 0 ; i < grassArray.length; i++){
+              const grass = grassArray[i]
+              if(
+                detectCollision({
+                  object1:player,
+                  object2:{...grass, position: {
+                    x: grass.position.x - 8 ,
+                    y: grass.position.y + 8 
+                  }}
+                })
+              ){
+                colideGrassShadow = true
+                colideGrass.left = true
+                break
+              }
+              else{
+                colideGrassShadow = false
+                colideGrass.left = false
+              }
+            }
+            if(moving){
+              player.x -= player.speed / Math.sqrt(2); // Ruch na skos
+              player.y -= player.speed / Math.sqrt(2);
+              player.cameraToTopLeft()
+              currentDirection = 'left'
+              currentFrame = currentFrame % totalFrames.down
+              srcX = currentFrame * 252
+              if(!colideGrass.left){            
+                srcY = 504
+              }
+              else if(colideGrass.left){
+                srcY = 1536
+              }
+            }
+          }
+          else if (keyS && keyD){
+            for (let i = 0 ; i < blocks.length; i++){
+              const block = blocks[i]
+              if(
+                detectCollision({
+                  object1:player,
+                  object2:{...block, position: {
+                    x: block.position.x - 8 ,
+                    y: block.position.y - 8 
+                  }}
+                })
+              ){
+                moving = false
+                srcX = 0
+                break
+              }
+            }
+            for (let i = 0 ; i < grassArray.length; i++){
+              const grass = grassArray[i]
+              if(
+                detectCollision({
+                  object1:player,
+                  object2:{...grass, position: {
+                    x: grass.position.x - 8 ,
+                    y: grass.position.y + 8 
+                  }}
+                })
+              ){
+                colideGrassShadow = true
+                colideGrass.right = true
+                break
+              }
+              else{
+                colideGrassShadow = false
+                colideGrass.right = false
+              }
+            }
+            if(moving){
+              player.x += player.speed / Math.sqrt(2); // Ruch na skos
+              player.y += player.speed / Math.sqrt(2);
+              player.cameraToBottomRight()
+              currentDirection = 'right'
+              currentFrame = currentFrame % totalFrames.down
+              srcX = currentFrame * 252
+              if(!colideGrass.right){            
+                srcY = 760
+              }
+              else if(colideGrass.right){
+                srcY = 1792
+              }
+            }
+        }
+          else if (keyW) {
           for (let i = 0 ; i < blocks.length; i++){
             const block = blocks[i]
             if(
               detectCollision({
                 object1:player,
                 object2:{...block, position: {
-                  x: block.position.x - 8 ,
-                  y: block.position.y - 8 
+                  x: block.position.x,
+                  y: block.position.y + 8
                 }}
               })
             ){
               moving = false
               srcX = 0
+              break
+            }
+          }
+          for (let i = 0 ; i < grassArray.length; i++){
+            const grass = grassArray[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...grass, position: {
+                  x: grass.position.x - 8 ,
+                  y: grass.position.y + 8 
+                }}
+              })
+            ){
+              colideGrassShadow = true
+              colideGrass.top = true
+              break
+            }
+            else{
+              colideGrassShadow = false
+              colideGrass.top = false
+            }
+          }
+          if(moving){
+            player.y -= player.speed;
+            player.cameraToBottom()
+            currentDirection = 'top'
+            currentFrame = currentFrame % totalFrames.down
+            srcX = currentFrame * 252
+            if(!colideGrass.top){            
+              srcY = 252
+            }
+            else if(colideGrass.top){
+              srcY = 1280
+            }
+          }
+  
+        } else if (keyA) {
+          for (let i = 0 ; i < blocks.length; i++){
+            const block = blocks[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...block, position: {
+                  x: block.position.x + 8,
+                  y: block.position.y 
+                }}
+              })
+            ){
+              moving = false
+              srcX = 0
+              break
+            }
+          }
+          for (let i = 0 ; i < grassArray.length; i++){
+            const grass = grassArray[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...grass, position: {
+                  x: grass.position.x - 8 ,
+                  y: grass.position.y + 8 
+                }}
+              })
+            ){
+              colideGrassShadow = true
+              colideGrass.left = true
+              break
+            }
+            else{
+              colideGrassShadow = false
+              colideGrass.left = false
+            }
+          }
+          if(moving){
+            player.x -= player.speed;
+            player.cameraToRight()
+            currentDirection = 'left'
+            currentFrame = currentFrame % totalFrames.down
+            srcX = currentFrame * 252
+            if(!colideGrass.left){            
+              srcY = 504
+            }
+            else if(colideGrass.left){
+              srcY = 1536
+            }
+          }
+  
+        } else if (keyS) {
+          for (let i = 0 ; i < blocks.length; i++){
+            const block = blocks[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...block, position: {
+                  x: block.position.x,
+                  y: block.position.y - 8
+                }}
+              })
+            ){
+              moving = false
+              srcX = 0
+              break
+            }
+          }
+          for (let i = 0 ; i < grassArray.length; i++){
+            const grass = grassArray[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...grass, position: {
+                  x: grass.position.x - 8 ,
+                  y: grass.position.y + 8 
+                }}
+              })
+            ){
+              colideGrassShadow = true
+              colideGrass.down = true
+              break
+            }
+            else{
+              colideGrassShadow = false
+              colideGrass.down = false
+            }
+          }
+          if(moving){
+            player.y += player.speed;
+            player.cameraToTop()
+            currentDirection = 'bottom'
+            currentFrame = currentFrame % totalFrames.down
+            srcX = currentFrame * 252
+            if(!colideGrass.down){            
+              srcY = 0
+            }
+            else if(colideGrass.down){
+              srcY = 1024
+            }
+          }
+  
+        } else if (keyD) {
+          for (let i = 0 ; i < blocks.length; i++){
+            const block = blocks[i]
+            if(
+              detectCollision({
+                object1:player,
+                object2:{...block, position: {
+                  x: block.position.x - 8,
+                  y: block.position.y
+                }}
+              })
+            ){
+              moving = false
+              srcX = 0
+  
               break
             }
           }
@@ -509,9 +743,8 @@ function animate(){
             }
           }
           if(moving){
-            player.x += player.speed / Math.sqrt(2); // Ruch na skos
-            player.y += player.speed / Math.sqrt(2);
-            player.cameraToBottomRight()
+            player.x = player.x + player.speed
+            player.cameraToLeft()
             currentDirection = 'right'
             currentFrame = currentFrame % totalFrames.down
             srcX = currentFrame * 252
@@ -522,287 +755,84 @@ function animate(){
               srcY = 1792
             }
           }
-      }
-        else if (keyW) {
-        for (let i = 0 ; i < blocks.length; i++){
-          const block = blocks[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...block, position: {
-                x: block.position.x,
-                y: block.position.y + 8
-              }}
-            })
-          ){
-            moving = false
-            srcX = 0
-            break
-          }
+          //player.x += player.speed;
+  
+          //console.log(player.speed)
         }
-        for (let i = 0 ; i < grassArray.length; i++){
-          const grass = grassArray[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...grass, position: {
-                x: grass.position.x - 8 ,
-                y: grass.position.y + 8 
-              }}
-            })
-          ){
-            colideGrassShadow = true
-            colideGrass.top = true
-            break
-          }
-          else{
-            colideGrassShadow = false
-            colideGrass.top = false
-          }
-        }
-        if(moving){
-          player.y -= player.speed;
-          player.cameraToBottom()
-          currentDirection = 'top'
-          currentFrame = currentFrame % totalFrames.down
-          srcX = currentFrame * 252
-          if(!colideGrass.top){            
-            srcY = 252
-          }
-          else if(colideGrass.top){
-            srcY = 1280
-          }
-        }
-
-      } else if (keyA) {
-        for (let i = 0 ; i < blocks.length; i++){
-          const block = blocks[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...block, position: {
-                x: block.position.x + 8,
-                y: block.position.y 
-              }}
-            })
-          ){
-            moving = false
-            srcX = 0
-            break
-          }
-        }
-        for (let i = 0 ; i < grassArray.length; i++){
-          const grass = grassArray[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...grass, position: {
-                x: grass.position.x - 8 ,
-                y: grass.position.y + 8 
-              }}
-            })
-          ){
-            colideGrassShadow = true
-            colideGrass.left = true
-            break
-          }
-          else{
-            colideGrassShadow = false
-            colideGrass.left = false
-          }
-        }
-        if(moving){
-          player.x -= player.speed;
-          player.cameraToRight()
-          currentDirection = 'left'
-          currentFrame = currentFrame % totalFrames.down
-          srcX = currentFrame * 252
-          if(!colideGrass.left){            
-            srcY = 504
-          }
-          else if(colideGrass.left){
-            srcY = 1536
-          }
-        }
-
-      } else if (keyS) {
-        for (let i = 0 ; i < blocks.length; i++){
-          const block = blocks[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...block, position: {
-                x: block.position.x,
-                y: block.position.y - 8
-              }}
-            })
-          ){
-            moving = false
-            srcX = 0
-            break
-          }
-        }
-        for (let i = 0 ; i < grassArray.length; i++){
-          const grass = grassArray[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...grass, position: {
-                x: grass.position.x - 8 ,
-                y: grass.position.y + 8 
-              }}
-            })
-          ){
-            colideGrassShadow = true
-            colideGrass.down = true
-            break
-          }
-          else{
-            colideGrassShadow = false
-            colideGrass.down = false
-          }
-        }
-        if(moving){
-          player.y += player.speed;
-          player.cameraToTop()
-          currentDirection = 'bottom'
-          currentFrame = currentFrame % totalFrames.down
-          srcX = currentFrame * 252
-          if(!colideGrass.down){            
-            srcY = 0
-          }
-          else if(colideGrass.down){
-            srcY = 1024
-          }
-        }
-
-      } else if (keyD) {
-        for (let i = 0 ; i < blocks.length; i++){
-          const block = blocks[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...block, position: {
-                x: block.position.x - 8,
-                y: block.position.y
-              }}
-            })
-          ){
-            moving = false
-            srcX = 0
-
-            break
-          }
-        }
-        for (let i = 0 ; i < grassArray.length; i++){
-          const grass = grassArray[i]
-          if(
-            detectCollision({
-              object1:player,
-              object2:{...grass, position: {
-                x: grass.position.x - 8 ,
-                y: grass.position.y + 8 
-              }}
-            })
-          ){
-            colideGrassShadow = true
-            colideGrass.right = true
-            break
-          }
-          else{
-            colideGrassShadow = false
-            colideGrass.right = false
-          }
-        }
-        if(moving){
-          player.x = player.x + player.speed
-          player.cameraToLeft()
-          currentDirection = 'right'
-          currentFrame = currentFrame % totalFrames.down
-          srcX = currentFrame * 252
-          if(!colideGrass.right){            
-            srcY = 760
-          }
-          else if(colideGrass.right){
-            srcY = 1792
-          }
-        }
-        //player.x += player.speed;
-
-        //console.log(player.speed)
-      }
-
-    c.drawImage(startingAreaBackground.image,startingAreaBackground.position.x,startingAreaBackground.position.y)
-    blocks.forEach((block) =>{
-        block.draw()
-    })
-    grassArray.forEach((grass) =>{
-      grass.draw()
-    })
-
-    itemsOnGround.forEach((itemOnGround)=>{
-      itemOnGround.draw()
+  
+      c.drawImage(startingAreaBackground.image,startingAreaBackground.position.x,startingAreaBackground.position.y)
+      blocks.forEach((block) =>{
+          block.draw()
       })
-    enemies.forEach((enemy) =>{
-      enemy.draw()
-    })
-    trees.forEach((tree)=>{
-      tree.drawBottom()
-    })
-    //c.fillStyle = 'rgba(0,0,255,0.2)'
-    //c.fillRect(player.cameraBox.position.x,player.cameraBox.position.y,player.cameraBox.width,player.cameraBox.height)
-
-
-    player.update()
-    player.draw()
+      grassArray.forEach((grass) =>{
+        grass.draw()
+      })
+  
+      itemsOnGround.forEach((itemOnGround)=>{
+        itemOnGround.draw()
+        })
+      enemies.forEach((enemy) =>{
+        enemy.draw()
+      })
+      trees.forEach((tree)=>{
+        tree.drawBottom()
+      })
+      //c.fillStyle = 'rgba(0,0,255,0.2)'
+      //c.fillRect(player.cameraBox.position.x,player.cameraBox.position.y,player.cameraBox.width,player.cameraBox.height)
+  
+  
+      player.update()
+      player.draw()
+      
+      if(!startedBottom){
+        attack()
+      }
+      c.drawImage(spriteSheet02.image,srcX,srcY,250,250,player.x-32,player.y-58,100,95)
+      if(startedBottom){
+        attack()
+      }
+      c.drawImage(startingAreaBackgroundBehind.image,startingAreaBackground.position.x,startingAreaBackground.position.y)
+      
+  
+     
+  
+      trees.forEach((tree)=>{
+        tree.drawTop()
+      })
+  
+      enemies.forEach((enemy)=>{
+        enemy.drawDmgText()
+      })
+      c.drawImage(quickBar,0,695,620,80)
+      if(!invSignHoverVar){
+        c.drawImage(invSign,970,695,90,80)
+      }
+      else{
+        c.drawImage(invSignHover,970,695,90,80)
+      }
+      if(!statSignHoverVar){
+        c.drawImage(statSign,1090,695,90,80)
+      }
+      else{
+        c.drawImage(statSignHover,1090,695,90,80)
+      }
+  
+      messageOnCanvas()
+      if(inventoryOpen){
+        openInventory()
+      }
+      drawSettings()
+      
+  
+      takeBagContent()
+      
+      slowerFrame++
+      if(slowerFrame > 10){
+        currentFrame++
+        slowerFrame = 0
+      }
+    }
     
-    if(!startedBottom){
-      attack()
-    }
-    c.drawImage(spriteSheet02.image,srcX,srcY,250,250,player.x-32,player.y-58,100,95)
-    if(startedBottom){
-      attack()
-    }
-    c.drawImage(startingAreaBackgroundBehind.image,startingAreaBackground.position.x,startingAreaBackground.position.y)
-    
-
-   
-
-    trees.forEach((tree)=>{
-      tree.drawTop()
-    })
-
-    enemies.forEach((enemy)=>{
-      enemy.drawDmgText()
-    })
-    c.drawImage(quickBar,0,695,620,80)
-    if(!invSignHoverVar){
-      c.drawImage(invSign,970,695,90,80)
-    }
-    else{
-      c.drawImage(invSignHover,970,695,90,80)
-    }
-    if(!statSignHoverVar){
-      c.drawImage(statSign,1090,695,90,80)
-    }
-    else{
-      c.drawImage(statSignHover,1090,695,90,80)
-    }
-
-    messageOnCanvas()
-    if(inventoryOpen){
-      openInventory()
-    }
-    drawSettings()
-    
-
-    takeBagContent()
-    
-    slowerFrame++
-    if(slowerFrame > 10){
-      currentFrame++
-      slowerFrame = 0
-    }
     setTimeout(() => {
       requestAnimationFrame(animate);
     }, 1000 / fps);
@@ -810,8 +840,7 @@ function animate(){
 }
 
 function handleKeyDown(event) {
-    // Ustaw odpowiednie flagi przy naciśnięciu klawiszy
-    if(!stopAll){
+    if(!stopAll&&gameStart){
 
     switch (event.key) {
       case 'w':
@@ -847,14 +876,14 @@ function handleKeyDown(event) {
         keyE = true;
         break;
       case 'Escape':
-        if(inventoryOpen&&!lockInventory&&!currentItemOn){
+        if(inventoryOpen&&!lockInventory&&!currentItemOn&&gameStart){
           if(firstHover){
             currentItemOnHover.hoverOn = false
           }
           inventoryOpen = false;
           stopAll = false;   
         }
-        else if(!inventoryOpen&&!settingsOpen){
+        else if(!inventoryOpen&&!settingsOpen&&gameStart){
           console.log('open settings')
           resetDirectionsButtons();
           settingsOpen = true;
@@ -864,16 +893,19 @@ function handleKeyDown(event) {
           console.log('close settings')
           settingsOpen = false;
           stopAll = false;
+          resumeHighlighted = false;
+          optionsHighlighted = false;
+          saveLoadHighlighted = false;
         }
         break
       case 'i':
         case 'I':
-        if(!inventoryOpen){
+        if(!inventoryOpen&&gameStart){
           inventoryOpen = true;
           stopAll = true;
         }
 
-      else if(inventoryOpen&&!lockInventory&&!currentItemOn){
+      else if(inventoryOpen&&!lockInventory&&!currentItemOn&&gameStart){
         inventoryOpen = false;
         stopAll = false;
         
@@ -886,8 +918,7 @@ function handleKeyDown(event) {
   
 
   function handleKeyUp(event) {
-    // Zresetuj odpowiednie flagi przy zwolnieniu klawiszy
-    if(!stopAll){
+    if(!stopAll&&gameStart){
     switch (event.key) {
       case 'w':
         case 'W':
@@ -1003,6 +1034,8 @@ function handleKeyDown(event) {
 
 }
 
+  window.addEventListener('mousemove', introChoiceMove)
+  window.addEventListener('click', introChoiceClick)
 
   window.addEventListener('keydown', handleKeyDown);
   window.addEventListener('keyup', handleKeyUp);
@@ -1010,9 +1043,14 @@ function handleKeyDown(event) {
   window.addEventListener('click', clickAcceptOrCancel)
   window.addEventListener('click', changeEquipment)
   window.addEventListener('click', clickOnSign)
+  window.addEventListener('click', clickOnOptions)
+  window.addEventListener('click', plusSkillPointButtonPush)
   window.addEventListener('mousemove', moveIfValidItem)
+  window.addEventListener('mousemove', plusSkillPointButtonInterraction)
+  window.addEventListener('mousemove', inventoryAttributesInterraction)
   window.addEventListener('mousemove', detectEquipmentCollision)
   window.addEventListener('mousemove', hoverOnItem)
+  window.addEventListener('mousemove', highlightOptions)
   window.addEventListener('mousemove', moveStackSlider)
   window.addEventListener('mousemove', hoverOnSign)
   window.addEventListener('mousedown', mouseDown)
@@ -1020,11 +1058,12 @@ function handleKeyDown(event) {
   window.addEventListener('resize',resize)
   window.addEventListener('mousemove', enemyShowNameHp)
 
-  animate();
+  
 
 
 
   const showInventoryStat = {
+    skillPoints:player.skillPoints,
     strength:player.strength,
     endurance:player.endurance,
     intelligence:player.intelligence,
@@ -1036,19 +1075,30 @@ function handleKeyDown(event) {
     physicalDefence:player.physicalDefence+" %",
     maxMp:player.maxMp,
     magicalDefence:player.magicalDefence+" %",
+    evasion: Math.round(player.agility*0.1),
+    attackSpeed: player.attackSpeed = 500,
+    buyPrice: 150.4 - (player.charisma*0.4)+" %",
+    sellPrice: 49.6 + (player.charisma*0.4)+" %",
+    
   }
   const showInventoryStatText = {
+    skillPionts:"Skill Points : ",
     strength:"Strength : ",
     endurance:"Endurance : ",
     intelligence:"Intelligence : ",
     agility:"Agility : ",
     charisma:"Charisma : ",
 
+    maxCarryWeight:"Max Carry Weight : ",
     damage:"Damage : ",
     maxHp:"Max Hp : ",
     physicalDefence:"Physical Defence : ",
     maxMp:"Max Mp : ",
     magicalDefence:"Magical Defence : ",
+    evasion:"Evasion : ",
+    attackSpeed:"Attack Speed : ",
+    buyPrice:"Buy Price : ",
+    sellPrice:"Sell Price : ",
   }
 
   function randomIntFromInterval(min, max) { // min and max included 
@@ -1097,10 +1147,16 @@ createNewItem({itemId:leatherBelt,rarity:'white',ammount:1,tier:1})
 createNewItem({itemId:'random',rarity:'random',ammount:1,tier:1})
 
 inventoryStatDraw()
-inventoryAttributesUpdate()
+
 
 //console.log(weaponsInField)
-
+console.log(player.knockback)
 allLoaded = true
-
-  
+if(allLoaded){
+  //animate();
+}
+window.onload = function(){
+  animate();
+}
+console.log(player.skillPoints)
+console.log(showInventoryStat.skillPoints)

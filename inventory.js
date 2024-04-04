@@ -7,6 +7,11 @@ const inventoryGridArray = [0,0,0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,0,0,                    
                             0,0,0,0,0,0,0,0,0,0,                   
                            ]
+let showStats = 3;
+let skillPointButton = 0;
+let updateMinDamage;
+let updateMaxDamage;
+let equipedItem = {minDamage:0}
 class InventoryGrid{
     constructor({position,index}){
         this.position = position
@@ -186,24 +191,298 @@ function inventoryStatDraw(){
 }
 
 
-function inventoryAttributesUpdate(){
 
+function plusSkillPointButtonPush(){
+    if(player.skillPoints>0){
+        if(skillPointButton==1){
+            player.skillPoints --;
+            player.strength ++;
+            //inventoryAttributesUpdate()
+            updateArmorStats()
+            showInventoryStat.skillPoints = player.skillPoints
+            showInventoryStat.strength = player.strength
+            showInventoryStat.damage = player.minDamage+" - "+player.maxDamage
+            console.log(equipedWeaponDamage.min,equipedWeaponDamage.max)
+        }
+    
+
+        else if(skillPointButton==2){
+            player.skillPoints --;
+            player.endurance ++;
+
+            updateArmorStats()
+            showInventoryStat.skillPoints = player.skillPoints
+            showInventoryStat.endurance = player.endurance
+            showInventoryStat.maxHp = 28 + player.endurance*2
+
+
+        }
+
+        else if(skillPointButton==3){
+            player.skillPoints --;
+            player.intelligence ++;
+            updateArmorStats()
+            showInventoryStat.skillPoints = player.skillPoints
+            showInventoryStat.intelligence = player.intelligence
+            showInventoryStat.maxMp = 8 + player.intelligence*2
+            showInventoryStat.magicalDefence = Math.round(player.intelligence*0.1)+" %"
+
+        }
+
+        else if(skillPointButton==4){
+            player.skillPoints --;
+            player.agility ++;
+            updateArmorStats()
+            showInventoryStat.skillPoints = player.skillPoints
+            showInventoryStat.agility = player.agility
+
+
+        }
+
+        else if(skillPointButton==5){
+            player.skillPoints --;
+            player.charisma ++;
+            updateArmorStats()
+            showInventoryStat.skillPoints = player.skillPoints
+            showInventoryStat.charisma = player.charisma
+
+
+        }
+    }
+}
+
+function plusSkillPointButtonInterraction(event){
+    if(event.clientX<240&&
+        event.clientX>220&&
+        event.clientY>615&&
+        event.clientY<635&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            skillPointButton = 1;
+        }
+    else if(event.clientX<240&&
+        event.clientX>220&&
+        event.clientY>645&&
+        event.clientY<665&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            skillPointButton = 2;
+        }
+    else if(event.clientX<240&&
+        event.clientX>220&&
+        event.clientY>675&&
+        event.clientY<695&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            skillPointButton = 3;
+        }
+    else if(event.clientX<240&&
+        event.clientX>220&&
+        event.clientY>705&&
+        event.clientY<725&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            skillPointButton = 4;
+        }
+    else if(event.clientX<240&&
+        event.clientX>220&&
+        event.clientY>735&&
+        event.clientY<755&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            skillPointButton = 5;
+        }
+    else{
+            skillPointButton = 0;
+    }
+}
+
+function showPlusSkillPointButton(){
+    if(player.skillPoints>0){
+        c.fillStyle = 'black'
+        c.fillRect(210,605,20,20)
+        if(skillPointButton==1){
+            c.fillStyle = 'aqua'
+        }
+        else{
+            c.fillStyle = 'white'
+        }
+
+        c.fillRect(212,607,16,16)
+        c.fillStyle = 'black'
+        c.font = "bold 20pt serif"; 
+        c.fillText("+",212+1,624,14,14)
+
+        c.fillStyle = 'black'
+        c.fillRect(210,635,20,20)
+        if(skillPointButton==2){
+            c.fillStyle = 'aqua'
+        }
+        else{
+            c.fillStyle = 'white'
+        }
+        c.fillRect(212,637,16,16)
+        c.fillStyle = 'black'
+        c.font = "bold 20pt serif"; 
+        c.fillText("+",212+1,654,14,14)
+
+        c.fillStyle = 'black'
+        c.fillRect(210,665,20,20)
+        if(skillPointButton==3){
+            c.fillStyle = 'aqua'
+        }
+        else{
+            c.fillStyle = 'white'
+        }
+        c.fillRect(212,667,16,16)
+        c.fillStyle = 'black'
+        c.font = "bold 20pt serif"; 
+        c.fillText("+",212+1,684,14,14)
+
+        c.fillStyle = 'black'
+        c.fillRect(210,695,20,20)
+        if(skillPointButton==4){
+            c.fillStyle = 'aqua'
+        }
+        else{
+            c.fillStyle = 'white'
+        }
+        c.fillRect(212,697,16,16)
+        c.fillStyle = 'black'
+        c.font = "bold 20pt serif"; 
+        c.fillText("+",212+1,714,14,14)
+
+        c.fillStyle = 'black'
+        c.fillRect(210,725,20,20)
+        if(skillPointButton==5){
+            c.fillStyle = 'aqua'
+        }
+        else{
+            c.fillStyle = 'white'
+        }
+        c.fillRect(212,727,16,16)
+        c.fillStyle = 'black'
+        c.font = "bold 20pt serif"; 
+        c.fillText("+",212+1,744,14,14)
+    }
+}
+
+function inventoryAttributesInterraction(event){
+    if(event.clientX<250&&
+        event.clientX>20&&
+        event.clientY>610&&
+        event.clientY<640&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            showStats = 1;
+        }
+    else if(event.clientX<250&&
+        event.clientX>20&&
+        event.clientY>639&&
+        event.clientY<670&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            showStats = 2;
+        }
+    else if(event.clientX<250&&
+        event.clientX>20&&
+        event.clientY>669&&
+        event.clientY<700&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            showStats = 3;
+        }
+    else if(event.clientX<250&&
+        event.clientX>20&&
+        event.clientY>699&&
+        event.clientY<730&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            showStats = 4;
+        }
+    else if(event.clientX<250&&
+        event.clientX>20&&
+        event.clientY>729&&
+        event.clientY<760&&inventoryOpen&&!lockInventory&&!currentItemOn){
+            showStats = 5;
+        }
+    else{
+            showStats = 0;
+        }
 }
 function inventoryAttributesDraw(){
+    //c.fillStyle = 'black'
+    //c.fillRect(238,600,320,150)
+    if(showStats==1||showStats==2||showStats==3||showStats==4||showStats==5){
+        c.fillRect(238,600,320,150)
+        c.fillStyle = 'lightgrey'
+    }
+    else{
+        c.fillStyle = 'grey'
+    }
+
+    c.fillRect(240,602,316,146)
+
+    //c.fillStyle = 'black'
+    //c.fillRect(20,600,220,30)
+    if(showStats==1){
+        c.fillStyle = 'black'
+        c.fillRect(20,600,220,30)
+        c.fillStyle = 'lightgrey'
+        c.fillRect(22,602,218,26)
+    }
+    else{
+        c.fillStyle = 'gray'
+        c.fillRect(22,602,216,28)
+    }
+
+
+    //c.fillStyle = 'black'
+    //c.fillRect(20,630,220,30)
+    if(showStats==2){
+        c.fillStyle = 'black'
+        c.fillRect(20,630,220,30)
+        c.fillStyle = 'lightgrey'
+        c.fillRect(22,632,218,26)
+    }
+    else{
+        c.fillStyle = 'gray'
+        c.fillRect(22,632,216,28)
+    }
+
+    //c.fillStyle = 'black'
+    //c.fillRect(20,660,220,30)
+    if(showStats==3){
+        c.fillStyle = 'black'
+        c.fillRect(20,660,220,30)
+        c.fillStyle = 'lightgrey'
+        c.fillRect(22,662,218,26)
+    }
+    else{
+        c.fillStyle = 'gray'
+        c.fillRect(22,662,216,28)
+    }
+    
+    //c.fillStyle = 'black'
+    //c.fillRect(20,690,220,30)
+    if(showStats==4){
+        c.fillStyle = 'black'
+        c.fillRect(20,690,220,30)
+        c.fillStyle = 'lightgrey'
+        c.fillRect(22,692,218,26)
+    }
+    else{
+        c.fillStyle = 'gray'
+        c.fillRect(22,692,216,28)
+    }
+    
+    //c.fillStyle = 'black'
+    //c.fillRect(20,720,220,30)
+    if(showStats==5){
+        c.fillStyle = 'black'
+        c.fillRect(20,720,220,30)
+        c.fillStyle = 'lightgrey'
+        c.fillRect(22,722,218,26)
+    }
+    else{
+        c.fillStyle = 'gray'
+        c.fillRect(22,722,216,26)
+    }
+    
+
     c.fillStyle = 'black'
-    c.font = "bold 20px serif";     
+    c.font = "bold 20px serif";
+    
+    c.fillText(showInventoryStatText.skillPionts,190,570,150,100)
+    c.fillText(showInventoryStat.skillPoints,320,570,150,100)
+
     c.fillText(showInventoryStatText.strength,30,620,150,100)
     c.fillText(showInventoryStatText.endurance,30,650,150,100)
     c.fillText(showInventoryStatText.intelligence,30,680,150,100)
     c.fillText(showInventoryStatText.agility ,30,710,150,100)
     c.fillText(showInventoryStatText.charisma,30,740,150,100)
-
-    c.fillText(showInventoryStatText.damage,250,620,150,100)
-    c.fillText(showInventoryStatText.maxHp,250,650,150,100)
-    c.fillText(showInventoryStatText.physicalDefence,250,680,150,100)
-    c.fillText(showInventoryStatText.maxMp ,250,710,150,100)
-    c.fillText(showInventoryStatText.magicalDefence,250,740,150,100)
-
 
     c.fillText(showInventoryStat.strength,180,620,150,100)
     c.fillText(showInventoryStat.endurance,180,650,150,100)
@@ -211,11 +490,54 @@ function inventoryAttributesDraw(){
     c.fillText(showInventoryStat.agility ,180,710,150,100)
     c.fillText(showInventoryStat.charisma,180,740,150,100)
 
-    c.fillText(showInventoryStat.damage,450,620,150,100)
-    c.fillText(showInventoryStat.maxHp,450,650,150,100)
-    c.fillText(showInventoryStat.physicalDefence,450,680,150,100)
-    c.fillText(showInventoryStat.maxMp ,450,710,150,100)
-    c.fillText(showInventoryStat.magicalDefence,450,740,150,100)
+    if(showStats==0){
+        c.fillText(showInventoryStatText.damage,250,620,150,100)
+        c.fillText(showInventoryStatText.maxHp,250,650,150,100)
+        c.fillText(showInventoryStatText.physicalDefence,250,680,150,100)
+        c.fillText(showInventoryStatText.maxMp ,250,710,150,100)
+        c.fillText(showInventoryStatText.magicalDefence,250,740,150,100)
+    
+        c.fillText(showInventoryStat.damage,450,620,150,100)
+        c.fillText(showInventoryStat.maxHp,450,650,150,100)
+        c.fillText(showInventoryStat.physicalDefence,450,680,150,100)
+        c.fillText(showInventoryStat.maxMp ,450,710,150,100)
+        c.fillText(showInventoryStat.magicalDefence,450,740,150,100)
+    }
+    else if(showStats==1){
+        c.fillText(showInventoryStatText.damage,250,620,150,100)
+        c.fillText(showInventoryStatText.maxCarryWeight,250,650,150,100)
+
+        c.fillText(showInventoryStat.damage,450,620,150,100)
+        c.fillText(45+player.strength*5,450,650,150,100)
+    }
+    else if(showStats==2){
+        c.fillText(showInventoryStatText.maxHp,250,620,150,100)
+        c.fillText(showInventoryStatText.physicalDefence,250,650,150,100)
+
+        c.fillText(showInventoryStat.maxHp,450,620,150,100)
+        c.fillText(showInventoryStat.physicalDefence,450,650,150,100)
+    }
+    else if(showStats==3){
+        c.fillText(showInventoryStatText.maxMp ,250,620,150,100)
+        c.fillText(showInventoryStatText.magicalDefence,250,650,150,100)
+
+        c.fillText(showInventoryStat.maxMp ,450,620,150,100)
+        c.fillText(showInventoryStat.magicalDefence,450,650,150,100)
+    }
+    else if(showStats==4){
+        c.fillText(showInventoryStatText.attackSpeed ,250,620,150,100)
+        c.fillText(showInventoryStatText.evasion,250,650,150,100)
+
+        c.fillText(showInventoryStat.attackSpeed ,450,620,150,100)
+        c.fillText(showInventoryStat.evasion,450,650,150,100)
+    }
+    else if(showStats==5){
+        c.fillText(showInventoryStatText.buyPrice ,250,620,150,100)
+        c.fillText(showInventoryStatText.sellPrice,250,650,150,100)
+
+        c.fillText(showInventoryStat.buyPrice ,450,620,150,100)
+        c.fillText(showInventoryStat.sellPrice,450,650,150,100)
+    }
 }
 function drawAllSlots(){
     if(currentItemOn){
@@ -304,33 +626,27 @@ function drawAllSlots(){
     
 }
 function hoverOnSign(event){
-    if(event.clientX<1090+120&&
-        event.clientX>950&&
-        event.clientY>670&&
-        event.clientY<695+100&&!inventoryOpen&&!settingsOpen){
+
             if(event.clientX<970+90&&
                 event.clientX>980&&
                 event.clientY>695&&
-                event.clientY<695+80&&!inventoryOpen){
+                event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
                     invSignHoverVar = true
                 }
                 else{
                     invSignHoverVar = false
                 }
+
             if(event.clientX<1090+90&&
                 event.clientX>1100&&
                 event.clientY>695&&
-                event.clientY<695+80&&!inventoryOpen){
+                event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
                     statSignHoverVar = true
                 }
                 else{
                     statSignHoverVar = false
                 }
-    }
-    if(event.clientX<1070+120&&
-        event.clientX>950&&
-        event.clientY>10&&
-        event.clientY<100+100&&inventoryOpen){
+    
             if(event.clientX<1070+100&&
                 event.clientX>1070&&
                 event.clientY>30&&
@@ -342,7 +658,7 @@ function hoverOnSign(event){
             }
 
 
-    }
+    
 
 }
 function clickOnSign(event){
@@ -362,7 +678,17 @@ function clickOnSign(event){
             stopAll = true;
             invSignHoverVar = false;
     }
-    c.drawImage(invSignHover,970,695,90,80)
+    if(event.clientX<1090+90&&
+        event.clientX>1100&&
+        event.clientY>695&&
+        event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
+            resetDirectionsButtons();
+            settingsOpen = true;
+            stopAll = true;
+            statSignHoverVar = false
+        }
+
+    //c.drawImage(invSignHover,970,695,90,80)
 }
 
 function openInventory(){
@@ -379,7 +705,9 @@ else{
 c.fillStyle = 'black'
 c.font = "bold 20px serif";
 c.fillText(showInventoryCarryWeight,800,600,150,100)
+
 inventoryAttributesDraw()
+showPlusSkillPointButton()
 inventories.forEach((inventoryBlock)=>{
 inventoryBlock.draw()
 

@@ -120,6 +120,7 @@ class Enemy {
         this.grassColide = false
         this.grassCheck = false
         this.currentHpBar = this.enemyTextWidthHpBar*2
+        this.enemyOnKnockback = false
         
         this.name = this.rarityOnName + ' Slime'
         this.enemyTextWidth = c.measureText(this.name).width;
@@ -243,7 +244,7 @@ class Enemy {
   //c.fillRect(this.position.x,this.position.y,50,50)
   }
   detectGrassCollision(){
-    if(allLoaded){
+    //if(allLoaded){
       for (let i = 0 ; i < grassArray.length; i++){
         const grass = grassArray[i]
         if(
@@ -261,7 +262,7 @@ class Enemy {
           this.shadowOn = true
         }
       }
-    }
+    //}
     }
     calculateEnemyHpBar(){
       this.maxHpBarPercent = this.maxHp * 0.01;
@@ -286,6 +287,7 @@ class Enemy {
       this.playerDamage = player.damage
       this.enemyHitText = true
       this.calculateEnemyHpBar()
+      this.enemyOnKnockback = true
 
       if(this.currentHp<1){
         this.active = false
@@ -299,8 +301,8 @@ class Enemy {
       }
       //console.log('enemy hit',player.knockback)
         setTimeout (()=>{
-          this.speed = this.speed *-1
-          
+          //this.speed = this.speed *-1
+          this.enemyOnKnockback = false
         },player.knockback)
         setTimeout (()=>{
 
@@ -475,6 +477,7 @@ class Enemy {
     }
   }
   enemyMovementAttack(){  
+
   this.x = this.position.x
   this.y = this.position.y
 
@@ -485,6 +488,7 @@ class Enemy {
         this.blockDown = false
         this.blockLeft = false
         this.blockUp = false
+   
         //right
         if(player.x-10>this.position.x&&player.y<this.position.y+5&&player.y>this.position.y-5){
           for (let i = 0 ; i < blocks.length; i++){
@@ -505,7 +509,12 @@ class Enemy {
           }
           if(this.moving){
             //console.log('prawo')
-            this.position.x += this.enemySpeed
+            if(this.enemyOnKnockback){
+              this.position.x -= this.enemySpeed
+            }
+            else{
+              this.position.x += this.enemySpeed
+            }
           } 
         }
         //left
@@ -528,7 +537,13 @@ class Enemy {
           }
           if(this.moving){
             //console.log('lewo')
-            this.position.x = this.position.x - this.enemySpeed
+            if(this.enemyOnKnockback){
+              this.position.x = this.position.x + this.enemySpeed
+            }
+            else{
+              this.position.x = this.position.x - this.enemySpeed
+            }
+            
           } 
         }
         //top
@@ -551,7 +566,13 @@ class Enemy {
           }
           if(this.moving){
             //console.log('gora')
-            this.position.y -= this.enemySpeed
+            if(this.enemyOnKnockback){
+              this.position.y += this.enemySpeed
+            }
+            else{
+              this.position.y -= this.enemySpeed
+            }
+            
           } 
         }
         else if(player.y+10>this.position.y&&player.x+10<this.position.x+25&&player.x+10>this.position.x+10){
@@ -573,7 +594,13 @@ class Enemy {
           }
           if(this.moving){
             //console.log('dol')
-            this.position.y += this.enemySpeed
+            if(this.enemyOnKnockback){
+              this.position.y -= this.enemySpeed
+            }
+            else{
+              this.position.y += this.enemySpeed
+            }
+            
           } 
         }
         //rightdown
@@ -627,10 +654,22 @@ class Enemy {
             
             if(this.moving){
               if(!this.blockRight){
-                this.position.x += this.enemySpeed
+
+                if(this.enemyOnKnockback){
+                  this.position.x -= this.enemySpeed
+                }
+                else{
+                  this.position.x += this.enemySpeed
+                }
               }
               if(!this.blockDown){
-                this.position.y += this.enemySpeed
+
+                if(this.enemyOnKnockback){
+                  this.position.y -= this.enemySpeed
+                }
+                else{
+                  this.position.y += this.enemySpeed
+                }
               }
             }
 
@@ -689,10 +728,22 @@ class Enemy {
             //console.log('prawoDol')
             if(this.moving){
               if(!this.blockLeft){
-                this.position.x -= this.enemySpeed
+
+                if(this.enemyOnKnockback){
+                  this.position.x += this.enemySpeed
+                }
+                else{
+                  this.position.x -= this.enemySpeed
+                }
               }
               if(!this.blockUp){
-                this.position.y -= this.enemySpeed
+
+                if(this.enemyOnKnockback){
+                  this.position.y += this.enemySpeed
+                }
+                else{
+                  this.position.y -= this.enemySpeed
+                }
               }
             }
 
@@ -743,10 +794,22 @@ class Enemy {
           }
 
             if(!this.blockRight){
-              this.position.x += this.enemySpeed
+
+              if(this.enemyOnKnockback){
+                this.position.x -= this.enemySpeed
+              }
+              else{
+                this.position.x += this.enemySpeed
+              }
             }
             if(!this.blockUp){
-              this.position.y -= this.enemySpeed
+
+              if(this.enemyOnKnockback){
+                this.position.y += this.enemySpeed
+              }
+              else{
+                this.position.y -= this.enemySpeed
+              }
             }
           
         }   
@@ -794,10 +857,22 @@ class Enemy {
           }
 
             if(!this.blockLeft){
-              this.position.x -= this.enemySpeed
+
+              if(this.enemyOnKnockback){
+                this.position.x += this.enemySpeed
+              }
+              else{
+                this.position.x -= this.enemySpeed
+              }
             }
             if(!this.blockDown){
-              this.position.y += this.enemySpeed
+
+              if(this.enemyOnKnockback){
+                this.position.y -= this.enemySpeed
+              }
+              else{
+                this.position.y += this.enemySpeed
+              }
             }
           }
         
