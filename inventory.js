@@ -626,7 +626,7 @@ function drawAllSlots(){
     
 }
 function hoverOnSign(event){
-
+        if(gameStart){
             if(event.clientX<970+90&&
                 event.clientX>980&&
                 event.clientY>695&&
@@ -659,36 +659,39 @@ function hoverOnSign(event){
 
 
     
-
+        }
 }
 function clickOnSign(event){
-    if(event.clientX<1070+100&&
-        event.clientX>1100&&
-        event.clientY>30&&
-        event.clientY<30+100&&inventoryOpen&&!lockInventory&&!currentItemOn){
-            inventoryOpen = false;
-            stopAll = false;
-            xSignHoverVar = false;
+    if(gameStart){
+        if(event.clientX<1070+100&&
+            event.clientX>1100&&
+            event.clientY>30&&
+            event.clientY<30+100&&inventoryOpen&&!lockInventory&&!currentItemOn){
+                inventoryOpen = false;
+                stopAll = false;
+                xSignHoverVar = false;
+            }
+        if(event.clientX<970+90&&
+            event.clientX>980&&
+            event.clientY>695&&
+            event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
+                inventoryOpen = true;
+                stopAll = true;
+                invSignHoverVar = false;
         }
-    if(event.clientX<970+90&&
-        event.clientX>980&&
-        event.clientY>695&&
-        event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
-            inventoryOpen = true;
-            stopAll = true;
-            invSignHoverVar = false;
+        if(event.clientX<1090+90&&
+            event.clientX>1100&&
+            event.clientY>695&&
+            event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
+                resetDirectionsButtons();
+                settingsOpen = true;
+                stopAll = true;
+                statSignHoverVar = false
+            }
+    
+        //c.drawImage(invSignHover,970,695,90,80)
     }
-    if(event.clientX<1090+90&&
-        event.clientX>1100&&
-        event.clientY>695&&
-        event.clientY<695+80&&!inventoryOpen&&!settingsOpen){
-            resetDirectionsButtons();
-            settingsOpen = true;
-            stopAll = true;
-            statSignHoverVar = false
-        }
 
-    //c.drawImage(invSignHover,970,695,90,80)
 }
 
 function openInventory(){
